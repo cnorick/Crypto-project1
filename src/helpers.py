@@ -12,10 +12,13 @@ def pad(message, blockSize):
     paddingNeeded = blockSize - (len(message) % blockSize)
 
     paddedMessage = message[:]
-    for(i in range(paddingNeeded)):
-        paddedMessage.append(bytes(paddingNeeded))
+    for i in range(paddingNeeded):
+        paddedMessage.append(paddingNeeded)
 
     return paddedMessage
 
 def unpad(message):
     return
+
+m = bytearray('abcd', 'utf8')
+print(pad(m, 4))
