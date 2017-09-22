@@ -30,12 +30,18 @@ def unpad(message):
     return bytes(message[:-numPadding])
 
 '''
-Generates len pseudorandom bytes.
+Generates n pseudorandom bytes.
 '''
-def generateIV(len):
-    if len < 1:
-        raise ValueError('len must be greater than 0')
-    return bytes(random.getrandbits(8) for _ in range(len))
+def generateIV(n):
+    if n < 1:
+        raise ValueError('n must be greater than 0')
+    return bytes(random.getrandbits(8) for _ in range(n))
+
+'''
+Divides message into chunks of size n. The last message may be shorter than n.
+'''
+def chunkMessage(message, n):
+    return [message[i:i+n] for i in range(0, len(message), n)]
 
 '''
 Test that unpad correctly reverses pad.
