@@ -43,7 +43,10 @@ cipherText is prepended with the IV created from encrypt.
 def decrypt(cipherText, key):
     if (cipherText is None) or (len(cipherText) == 0):
         raise ValueError('cipherText cannot be null or empty')
+
+    #undo the pretty string
     cipherText = binascii.unhexlify(cipherText)
+    
     IV, *blocks = chunkMessage(cipherText, blockSize)
     
     plainText = bytes()
