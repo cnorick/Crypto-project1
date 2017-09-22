@@ -44,6 +44,12 @@ def chunkMessage(message, n):
     return [message[i:i+n] for i in range(0, len(message), n)]
 
 '''
+bitwise XORs m1 and m2.
+'''
+def XOR(m1, m2):
+    return bytes(a ^ b for a, b in zip(m1, m2))
+
+'''
 Test that unpad correctly reverses pad.
 '''
 def paddingTest():
