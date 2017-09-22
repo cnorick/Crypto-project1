@@ -1,4 +1,5 @@
 import random
+from Crypto.Cipher import AES
 
 '''
 pads message to be a multiple of blocksize.
@@ -48,6 +49,18 @@ bitwise XORs m1 and m2.
 '''
 def XOR(m1, m2):
     return bytes(a ^ b for a, b in zip(m1, m2))
+
+'''
+Fk is a pseudorandom function keyed on <key>. It takes message as input
+and outputs its encrypted ciphertext if <encrypt> is true. Otherwise it
+pushes the ciphertext back through the pseudorandom function and outputs the plaintext.
+'''
+def Fk(input, key, encrypt = True):
+    cipher = AES.AESCipher(key[:32], AES.MODE_ECB)
+    if encrypt:
+        return bytes(cipher.encrypt(input))
+    else:
+        return bytes(cipher.decrypt(input))
 
 '''
 Test that unpad correctly reverses pad.

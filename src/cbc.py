@@ -1,6 +1,5 @@
 import binascii
-from Crypto.Cipher import AES
-from helpers import pad, generateIV, chunkMessage, XOR
+from helpers import pad, generateIV, chunkMessage, XOR, Fk
 
 blockSize = 16 # bytes
 
@@ -32,9 +31,7 @@ XORs the message with the IV and passes it through AES.
 '''
 def encryptBlock(block, key, IV):
     xoredMessage = XOR(block, IV)
-    cipher = AES.AESCipher(key[:32], AES.MODE_ECB)
-    ciphertext = cipher.encrypt(xoredMessage)
-    return bytes(ciphertext)
+    return Fk(xoredMessage, key, True)
 
 '''
 Decrypts message via cbc with key given the ciphertext generated from encrypt.
@@ -61,8 +58,7 @@ def decrypt(cipherText, key):
 Decrypt block via cbc.
 '''
 def decryptBlock(block, key, IV):
-    cipher = AES.AESCipher(key[:32], AES.MODE_ECB)
-    return XOR(cipher.decrypt(block), IV)
+    return XOR(Fk(block, key, False), IV)
 
 key = 'abcdefghijklmnopqrstuvwxyz123456' 
 m = bytes('Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! ', 'utf8')
