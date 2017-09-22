@@ -63,6 +63,16 @@ def Fk(input, key, encrypt = True):
         return bytes(cipher.decrypt(input))
 
 '''
+Creates n CTRs starting at IV and incrementing by one each time.
+'''
+def getCtrs(IV, n):
+    if type(IV) is not bytes:
+        raise ValueError('IV must be bytes')
+    IVasInt = int.from_bytes(IV, 'big')
+    return [i.to_bytes(len(IV), 'big') for i in range(IVasInt, IVasInt + n)]
+
+
+'''
 Test that unpad correctly reverses pad.
 '''
 def paddingTest():
