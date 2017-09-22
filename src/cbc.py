@@ -6,6 +6,7 @@ blockSize = 16 # bytes
 
 '''
 Encrypts message using key with cbc mode.
+Appends IV to beginning of ciphertext. If IV isn't provided, one is generated.
 '''
 def encrypt(message, key, IV = None):
     if (message is None) or (len(message) == 0):
@@ -20,7 +21,6 @@ def encrypt(message, key, IV = None):
     for block in blocks:
         # update the IV to be the newly encrypted ciphertext.
         IV = encryptBlock(block, key, IV)
-        print(binascii.hexlify(bytearray(IV)).decode('utf-8'))
         cipherText += IV
     
     # Make the value a pretty string
@@ -36,9 +36,34 @@ def encryptBlock(block, key, IV):
     ciphertext = cipher.encrypt(xoredMessage)
     return bytes(ciphertext)
 
+'''
+Decrypts message via cbc with key given the ciphertext generated from encrypt.
+cipherText is prepended with the IV created from encrypt.
+'''
 def decrypt(cipherText, key):
-    return
+    if (cipherText is None) or (len(cipherText) == 0):
+        raise ValueError('cipherText cannot be null or empty')
+    cipherText = binascii.unhexlify(cipherText)
+    IV, *blocks = chunkMessage(cipherText, blockSize)
+    
+    plainText = bytes()
+    for block in blocks:
+        plainText += decryptBlock(block, key, IV)
+        IV = block # IV becomes current ciphertext
 
-m = bytes('abcd', 'utf8')
-cipherText = encrypt(m, 'abcdefghijklmnopqrstuvwxyz123456')
+    # Make output pretty.
+    return plainText.decode('utf-8')
+
+'''
+Decrypt block via cbc.
+'''
+def decryptBlock(block, key, IV):
+    cipher = AES.AESCipher(key[:32], AES.MODE_ECB)
+    return XOR(cipher.decrypt(block), IV)
+
+key = 'abcdefghijklmnopqrstuvwxyz123456' 
+m = bytes('Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! ', 'utf8')
+cipherText = encrypt(m, key)
 print(cipherText)
+plainText = decrypt(cipherText, key)
+print(plainText)
