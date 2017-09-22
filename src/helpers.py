@@ -1,3 +1,5 @@
+import random
+
 '''
 pads message to be a multiple of blocksize.
 message is a byte array.
@@ -26,6 +28,14 @@ def unpad(message):
     message = bytearray(message)
     numPadding = message[-1]
     return bytes(message[:-numPadding])
+
+'''
+Generates len pseudorandom bytes.
+'''
+def generateIV(len):
+    if len < 1:
+        raise ValueError('len must be greater than 0')
+    return bytes(random.getrandbits(8) for _ in range(len))
 
 '''
 Test that unpad correctly reverses pad.
