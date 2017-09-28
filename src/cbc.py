@@ -60,9 +60,10 @@ Decrypt block via cbc.
 def decryptBlock(block, key, IV):
     return XOR(Fk(block, key, False), IV)
 
-key = 'abcdefghijklmnopqrstuvwxyz123456' 
-m = bytes('Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! ', 'utf8')
-cipherText = encrypt(m, key)
-print(cipherText)
-plainText = decrypt(cipherText, key)
-print(plainText)
+def test():
+    key = 'abcdefghijklmnopqrstuvwxyz123456' 
+    m = bytes('Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! ', 'utf8')
+    cipherText = encrypt(m, key)
+    print(cipherText)
+    plainText = decrypt(cipherText, key)
+    print(plainText)

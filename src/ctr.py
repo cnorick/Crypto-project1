@@ -3,8 +3,13 @@ from Crypto.Cipher import AES
 from multiprocessing.dummy import Pool as ThreadPool 
 from helpers import generateIV, chunkMessage, XOR, getCtrs, Fk
 
+
 blockSize = 16 # bytes
 
+'''
+Ecncrypts message with key using ctr mode.
+If IV is specified, it is used as the initial IV. Otherwise, one is generated randomly.
+'''
 def encrypt(message, key, IV = None):
     if (message is None) or (len(message) == 0):
         raise ValueError('message cannot be null or empty')
@@ -27,6 +32,9 @@ encrypts a single block given the correct counter for that block and the key.
 def encryptBlock(block, ctr, key):
     return XOR(block, Fk(ctr, key, True))
 
+'''
+Decrypts messages that were encrypted using ctr.
+'''
 def decrypt(cipherText, key):
     if (cipherText is None) or (len(cipherText) == 0):
         raise ValueError('cipherText cannot be null or empty')
@@ -52,10 +60,10 @@ def decryptBlock(block, ctr, key):
     # encrypt set to True because it's going forward through the cipher.
     return XOR(block, Fk(ctr, key, True))
     
-
-key = 'abcdefghijklmnopqrstuvwxyz123456'
-m = bytes('Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! ', 'utf8')
-cipherText = encrypt(m, key)
-print(cipherText)
-plainText = decrypt(cipherText, key)
-print(plainText)
+def test():
+    key = 'abcdefghijklmnopqrstuvwxyz123456'
+    m = bytes('Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! ', 'utf8')
+    cipherText = encrypt(m, key)
+    print(cipherText)
+    plainText = decrypt(cipherText, key)
+    print(plainText)
