@@ -1,5 +1,6 @@
 import binascii
 from Crypto.Cipher import AES
+from multiprocessing.dummy import Pool as ThreadPool 
 from helpers import generateIV, chunkMessage, XOR, getCtrs, Fk
 
 blockSize = 16 # bytes
@@ -16,10 +17,16 @@ def encrypt(message, key, IV = None):
 
     # TODO: parallelize
     for block, ctr in zip(blocks, ctrs):
-        cipherText += XOR(block, Fk(ctr, key, True))
+        cipherText += encryptBlock(block, ctr, key)
     
     # pretty string
     return binascii.hexlify(bytearray(cipherText)).decode('utf-8') 
+
+'''
+encrypts a single block given the correct counter for that block and the key.
+'''
+def encryptBlock(block, ctr, key):
+    return XOR(block, Fk(ctr, key, True))
 
 def decrypt(cipherText, key):
     if (cipherText is None) or (len(cipherText) == 0):
@@ -33,13 +40,21 @@ def decrypt(cipherText, key):
     
     plainText = bytes()
 
-    # TODO: parallelize
+    pool = ThreadPool(4)
+    plainText = pool.map(lambda x: decryptBlock(x[0], x[1], key), zip(blocks, ctrs))
     for block, ctr in zip(blocks, ctrs):
-        # encrypt set to True because it's going forward through the cipher.
-        plainText += XOR(block, Fk(ctr, key, True))
+        plainText += decryptBlock(block, ctr, key)
 
     # Make output pretty.
     return plainText.decode('utf-8')
+
+'''
+decrypts a single block given the correct counter and key.
+'''
+def decryptBlock(block, ctr, key):
+    # encrypt set to True because it's going forward through the cipher.
+    return XOR(block, Fk(ctr, key, True))
+    
 
 key = 'abcdefghijklmnopqrstuvwxyz123456'
 m = bytes('Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! Attack at dawn! ', 'utf8')
