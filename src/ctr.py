@@ -1,7 +1,8 @@
 import binascii
+import sys
 from Crypto.Cipher import AES
 from multiprocessing.dummy import Pool as ThreadPool 
-from helpers import generateIV, chunkMessage, XOR, getCtrs, Fk
+from helpers import generateIV, chunkMessage, XOR, getCtrs, Fk, readFiles, writeFile
 
 
 blockSize = 16 # bytes
@@ -67,3 +68,15 @@ def test():
     print(cipherText)
     plainText = decrypt(cipherText, key)
     print(plainText)
+
+
+
+# usage python cbc.py <e|d> inputFile outputFile keyFile [IVFile]
+if __name__ == "__main__":
+    enc, input, key, iv = readFiles(sys.argv)
+    if enc:
+        output = encrypt(input, key, iv)
+    else:
+        output = decrypt(input, key)
+    
+    writeFile(output, sys.argv)
