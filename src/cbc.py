@@ -53,7 +53,7 @@ def decrypt(cipherText, key):
         IV = block # IV becomes current ciphertext
 
     unpaddedPlainText = unpad(plainText)
-    
+
     # Make output pretty.
     return unpaddedPlainText.decode('utf-8')
 
@@ -80,6 +80,4 @@ if __name__ == "__main__":
     else:
         output = decrypt(input, key)
     
-    print(output)
-
     writeFile(output, sys.argv)
