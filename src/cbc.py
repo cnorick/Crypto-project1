@@ -1,5 +1,6 @@
 import binascii
-from helpers import pad, generateIV, chunkMessage, XOR, Fk
+import sys
+from helpers import pad, generateIV, chunkMessage, XOR, Fk, readFiles, writeFile
 
 blockSize = 16 # bytes
 
@@ -67,3 +68,16 @@ def test():
     print(cipherText)
     plainText = decrypt(cipherText, key)
     print(plainText)
+
+
+# usage python cbc.py <e|d> inputFile outputFile keyFile [IVFile]
+if __name__ == "__main__":
+    enc, input, key, iv = readFiles(sys.argv)
+    if enc:
+        output = encrypt(input, key, iv)
+    else:
+        output = decrypt(input, key)
+    
+    print(output)
+
+    writeFile(output, sys.argv)
