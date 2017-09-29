@@ -1,4 +1,5 @@
 import random
+from sys import exit
 from Crypto.Cipher import AES
 
 '''
@@ -71,6 +72,54 @@ def getCtrs(IV, n):
     IVasInt = int.from_bytes(IV, 'big')
     return [i.to_bytes(len(IV), 'big') for i in range(IVasInt, IVasInt + n)]
 
+'''
+Reads from the input, key, the IV file (if it is provided), and whether to decrypt or encrypt
+File order is <e|d> input output key [IV]
+Returns the file contents as bytes converted from utf8.
+Return order (encrypt, input, key, IV). IV is none if not provided. encrypt is boolean.
+'''
+def readFiles(argv):
+    if len(argv) < 5:
+        print('All parameters not specified')
+        exit(1)
+    if len(argv) > 6:
+        print('Too many parameters specified')
+        exit(1)
+
+    if argv[1] == 'e':
+        encrypt = True
+    elif argv[1] == 'd':
+        encrypt = False
+    else:
+        print('first argument must be e for encrypt or d for decrypt')
+        exit(1)
+
+    inputFileName = argv[2]
+    keyFileName = argv[4]
+
+    if len(argv) == 6:
+        IVFileName = argv[5]
+        with open(IVFileName, 'r') as f:
+            iv = bytes(f.read(), 'utf8')
+    else:
+        iv = None
+
+    with open(inputFileName, 'r') as f:
+        input = bytes(f.read(), 'utf8')
+
+    with open(keyFileName, 'r') as f:
+        key = bytes(f.read(), 'utf8')
+
+    return encrypt, input, key, iv 
+
+'''
+Writes message to the output file specified in argv.
+Output file must be at argv[2].
+'''
+def writeFile(message, argv):
+    outputFileName = argv[3]
+    with open(outputFileName, 'w') as f:
+        f.write(message)
 
 '''
 Test that unpad correctly reverses pad.
