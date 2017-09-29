@@ -42,4 +42,4 @@ if [ -z $o ]
     exit 1
 fi
 
-python3.6 src/cbc.py e $i $o $k $v
+python3.6 src/ctr.py d $i $o $k $v
