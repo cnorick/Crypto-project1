@@ -1,6 +1,6 @@
 import binascii
 import sys
-from helpers import pad, generateIV, chunkMessage, XOR, Fk, readFiles, writeFile
+from helpers import pad, unpad, generateIV, chunkMessage, XOR, Fk, readFiles, writeFile
 
 blockSize = 16 # bytes
 
@@ -52,8 +52,10 @@ def decrypt(cipherText, key):
         plainText += decryptBlock(block, key, IV)
         IV = block # IV becomes current ciphertext
 
+    unpaddedPlainText = unpad(plainText)
+    
     # Make output pretty.
-    return plainText.decode('utf-8')
+    return unpaddedPlainText.decode('utf-8')
 
 '''
 Decrypt block via cbc.
