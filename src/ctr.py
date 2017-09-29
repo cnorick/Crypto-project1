@@ -20,8 +20,8 @@ def encrypt(message, key, IV = None):
 
     cipherText = bytes(IV)
 
-    pool = ThreadPool(4)
-    cipherText += b''.join(pool.map(lambda x: encryptBlock(x[0], x[1], key), zip(blocks, ctrs)))
+    with ThreadPool(4) as pool:
+        cipherText += b''.join(pool.map(lambda x: encryptBlock(x[0], x[1], key), zip(blocks, ctrs)))
     
     # pretty string
     return binascii.hexlify(bytearray(cipherText)).decode('utf-8') 
@@ -47,8 +47,8 @@ def decrypt(cipherText, key):
     
     plainText = bytes()
 
-    pool = ThreadPool(4)
-    plainText = b''.join(pool.map(lambda x: decryptBlock(x[0], x[1], key), zip(blocks, ctrs)))
+    with ThreadPool(4) as pool:
+        plainText = b''.join(pool.map(lambda x: decryptBlock(x[0], x[1], key), zip(blocks, ctrs)))
 
     # Make output pretty.
     return plainText.decode('utf-8')
