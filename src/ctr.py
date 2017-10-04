@@ -1,4 +1,3 @@
-import binascii
 import sys
 from Crypto.Cipher import AES
 from multiprocessing.dummy import Pool as ThreadPool 
@@ -24,8 +23,7 @@ def encrypt(message, key, IV = None):
     with ThreadPool(4) as pool:
         cipherText += b''.join(pool.map(lambda x: encryptBlock(x[0], x[1], key), zip(blocks, ctrs)))
     
-    # pretty string
-    return binascii.hexlify(bytearray(cipherText)).decode('utf-8') 
+    return cipherText
 
 '''
 encrypts a single block given the correct counter for that block and the key.
@@ -40,9 +38,6 @@ def decrypt(cipherText, key):
     if (cipherText is None) or (len(cipherText) == 0):
         raise ValueError('cipherText cannot be null or empty')
 
-    #undo the pretty string
-    cipherText = binascii.unhexlify(cipherText)
-
     IV, *blocks = chunkMessage(cipherText, blockSize)
     ctrs = getCtrs(IV, len(blocks))
     
@@ -51,8 +46,7 @@ def decrypt(cipherText, key):
     with ThreadPool(4) as pool:
         plainText = b''.join(pool.map(lambda x: decryptBlock(x[0], x[1], key), zip(blocks, ctrs)))
 
-    # Make output pretty.
-    return plainText.decode('utf-8')
+    return plainText
 
 '''
 decrypts a single block given the correct counter and key.

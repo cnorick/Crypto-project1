@@ -1,4 +1,5 @@
 import random
+from binascii import unhexlify
 from sys import exit
 from Crypto.Cipher import AES
 
@@ -100,15 +101,15 @@ def readFiles(argv):
     if len(argv) == 6:
         IVFileName = argv[5]
         with open(IVFileName, 'r') as f:
-            iv = bytes(f.read(), 'utf8')
+            iv = unhexlify(f.read())
     else:
         iv = None
 
-    with open(inputFileName, 'r') as f:
-        input = bytes(f.read(), 'utf8')
+    with open(inputFileName, 'rb') as f:
+        input = f.read()
 
     with open(keyFileName, 'r') as f:
-        key = bytes(f.read(), 'utf8')
+        key = unhexlify(f.read())
 
     return encrypt, input, key, iv 
 
@@ -117,8 +118,10 @@ Writes message to the output file specified in argv.
 Output file must be at argv[2].
 '''
 def writeFile(message, argv):
+    if type(message) is not bytes:
+        raise ValueError('message must be bytes')
     outputFileName = argv[3]
-    with open(outputFileName, 'w') as f:
+    with open(outputFileName, 'wb') as f:
         f.write(message)
 
 '''

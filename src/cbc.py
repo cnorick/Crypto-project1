@@ -1,4 +1,3 @@
-import binascii
 import sys
 from helpers import pad, unpad, generateIV, chunkMessage, XOR, Fk, readFiles, writeFile
 
@@ -23,8 +22,7 @@ def encrypt(message, key, IV = None):
         IV = encryptBlock(block, key, IV)
         cipherText += IV
     
-    # Make the value a pretty string
-    return binascii.hexlify(bytearray(cipherText)).decode('utf-8') 
+    return cipherText
 
 '''
 Encrypts a single block using cbc mode.
@@ -42,9 +40,6 @@ def decrypt(cipherText, key):
     if (cipherText is None) or (len(cipherText) == 0):
         raise ValueError('cipherText cannot be null or empty')
 
-    #undo the pretty string
-    cipherText = binascii.unhexlify(cipherText)
-    
     IV, *blocks = chunkMessage(cipherText, blockSize)
     
     plainText = bytes()
@@ -52,10 +47,7 @@ def decrypt(cipherText, key):
         plainText += decryptBlock(block, key, IV)
         IV = block # IV becomes current ciphertext
 
-    unpaddedPlainText = unpad(plainText)
-
-    # Make output pretty.
-    return unpaddedPlainText.decode('utf-8')
+    return unpad(plainText)
 
 '''
 Decrypt block via cbc.
